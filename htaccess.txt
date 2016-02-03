@@ -1,81 +1,19 @@
-############################
-# Author: Funf Annan > TKRZ
-######### ATTENTION!########
-# Rename this file .htaccess
-############################
+Options +FollowSymLinks
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^example.it [NC]
+RewriteRule ^(.*)$ http://www.example.it/$1 [L,R=301]
 
-## No directory listings
 IndexIgnore *
+Options -Indexes
 
 Options +FollowSymlinks
-Options -Indexes
 
 RewriteEngine On
 
-## Block out common exploits
-RewriteCond %{QUERY_STRING} base64_encode[^(]*\([^)]*\) [OR]
-RewriteCond %{QUERY_STRING} (<|%3C)([^s]*s)+cript.*(>|%3E) [NC,OR]
-RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
-RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
-RewriteRule .* index.php [F]
-## End - Block exploits
+SetEnvIfNoCase ^(Accept-EncodXng|X-cept-Encoding|X{15}|~{15}|-{15})$ ^((gzip|deflate)s*,?s*)+|[X~-]{4,13}$ HAVE_Accept-Encoding
+RequestHeader append Accept-Encoding "gzip,deflate" env=HAVE_Accept-Encoding
 
-
-## Begin - Custom redirects
-# write your custom redirects
-
-RewriteEngine on
-
-# Redirect non-WWW to www ()
-RewriteCond %{HTTP_HOST} ^example.it [NC]
-RewriteRule ^(.*)$ http://www.example.it/$1 [L,R=301,NC]
-
-# Remove .index.php from URL
-RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /index\.php
-RewriteRule ^index\.php$ / [L,R=301]
-
-## End - Custom redirects
-
-
-## Begin - Joomla! core SEF Section.
-#
-RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-#
-## End - Joomla! core SEF Section.
-
-
-
-######################################
-######## CACHE IT! ZIP IT! ###########
-######################################
-
-Header unset Pragma
-
-## Sett Cache Control
-
-## 1 YEAR
-<FilesMatch "\.(flv|ico|pdf|avi|mov|ppt|doc|mp3|wmv|wav)$">
-Header set Cache-Control "max-age=29030400, public"
-</FilesMatch>
-
-## 1 WEEK
-<FilesMatch "\.(jpg|jpeg|png|gif|swf)$">
-Header set Cache-Control "max-age=604800, public"
-</FilesMatch>
-
-## 3 HOUR
-<FilesMatch "\.(txt|xml|js|css)$">
-Header set Cache-Control "max-age=10800"
-</FilesMatch>
-
-## NEVER CACHE
-<FilesMatch "\.(html|htm|php|cgi|pl)$">
-Header set Cache-Control "max-age=0, private, no-store, no-cache, must-revalidate"
-</FilesMatch>
-
-## compressing of files
+# Compressione
 AddOutputFilterByType DEFLATE text/plain
 AddOutputFilterByType DEFLATE text/html
 AddOutputFilterByType DEFLATE text/xml
@@ -83,12 +21,87 @@ AddOutputFilterByType DEFLATE text/css
 AddOutputFilterByType DEFLATE application/xml
 AddOutputFilterByType DEFLATE application/xhtml+xml
 AddOutputFilterByType DEFLATE application/rss+xml
+AddOutputFilterByType DEFLATE application/x-font-ttf
+AddOutputFilterByType DEFLATE font/opentype
+AddOutputFilterByType DEFLATE image/svg+xml
+AddOutputFilterByType DEFLATE image/x-icon
+AddOutputFilterByType DEFLATE text/x-component
 AddOutputFilterByType DEFLATE application/javascript
-AddOutputFilterByType DEFLATE application/x-javascript
+AddOutputFilterByType DEFLATE application/json
 
-## Disattivare ETags
-# Header unset ETag
-# </IfModule>
+## Security
+RewriteCond %{QUERY_STRING} proc/self/environ [OR]
+RewriteCond %{QUERY_STRING} base64_(en|de)code[^(]*\([^)]*\) [OR]
+RewriteCond %{QUERY_STRING} (<|%3C)([^s]*s)+cript.*(>|%3E) [NC,OR]
+RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
+RewriteRule .* index.php [F]
 
-## Disattivare gli ETags
-# FileETag non
+RewriteCond %{QUERY_STRING} concat[^\(]*\( [NC,OR]
+RewriteCond %{QUERY_STRING} union([^s]*s)+elect [NC,OR]
+RewriteCond %{QUERY_STRING} union([^a]*a)+ll([^s]*s)+elect [NC]
+RewriteRule .* - [F]
+
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+<Files "robots.txt">
+Order allow,deny
+Allow from all
+</Files>
+
+<Files ~ "(README.txt|LICENSE.txt|configuration.php|htaccess.txt|htaccess|htpasswd|dist)">
+Order allow,deny
+Deny from all
+</Files>
+
+# File caching
+FileETag MTime Size
+ExpiresActive On
+
+## Expiration time for css, javascript,images,text,audio and video
+
+# Css and Javascript
+ExpiresByType application/javascript A604800
+ExpiresByType application/x-javascript A604800
+ExpiresByType text/css A604800
+
+# Images and text
+ExpiresByType image/x-icon A2419200
+ExpiresByType image/ico A2419200
+ExpiresByType image/icon A2419200
+ExpiresByType text/ico A2419200
+ExpiresByType text/html A300
+ExpiresByType application/ico A2419200
+ExpiresByType image/jpeg A2419200
+ExpiresByType image/jpg A2419200
+ExpiresByType image/png A2419200
+ExpiresByType image/bmp A2419200
+ExpiresByType image/gif A2419200
+ExpiresByType image/tiff A2419200
+ExpiresByType image/jp2 A2419200
+ExpiresByType image/pipeg A2419200
+ExpiresByType image/svg+xml A2419200
+
+# Audio
+ExpiresByType audio/mpeg A2419200
+ExpiresByType audio/x-mpegurl A2419200
+ExpiresByType audio/x-pn-realaudio A2419200
+ExpiresByType audio/x-wav A2419200
+ExpiresByType audio/x-aiff A2419200
+ExpiresByType audio/basic A2419200
+
+# Video
+ExpiresByType application/x-shockwave-flash A2419200
+ExpiresByType video/mpeg A2419200
+ExpiresByType video/mp4 A2419200
+ExpiresByType video/quicktime A2419200
+ExpiresByType video/x-ms-asf A2419200
+ExpiresByType video/x-la-asf A2419200
+ExpiresByType video/x-msvideo A2419200
+
+RewriteCond %{REQUEST_URI} !^/index\.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule .* index.php [L]
+
+## End - Joomla! core SEF Section.
