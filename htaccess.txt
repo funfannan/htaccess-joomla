@@ -1,7 +1,10 @@
+
+# COMMENT OUT ZIP AND CACHE!
+
 Options +FollowSymLinks
 RewriteEngine On
-RewriteCond %{HTTP_HOST} ^example.it [NC]
-RewriteRule ^(.*)$ http://www.example.it/$1 [L,R=301]
+RewriteCond %{HTTP_HOST} ^example.com [NC]
+RewriteRule ^(.*)$ http://www.example.com/$1 [L,R=301]
 
 IndexIgnore *
 Options -Indexes
@@ -9,25 +12,42 @@ Options -Indexes
 Options +FollowSymlinks
 
 RewriteEngine On
+RewriteBase /
 
-SetEnvIfNoCase ^(Accept-EncodXng|X-cept-Encoding|X{15}|~{15}|-{15})$ ^((gzip|deflate)s*,?s*)+|[X~-]{4,13}$ HAVE_Accept-Encoding
-RequestHeader append Accept-Encoding "gzip,deflate" env=HAVE_Accept-Encoding
+#SetEnvIfNoCase ^(Accept-EncodXng|X-cept-Encoding|X{15}|~{15}|-{15})$ ^((gzip|deflate)s*,?s*)+|[X~-]{4,13}$ HAVE_Accept-Encoding
+#RequestHeader append Accept-Encoding "gzip,deflate" env=HAVE_Accept-Encoding
+
+
+# ### CUSTOM REDIRECTS ### #
+############################
+
+
+# ||---> GENERAL
+redirect 301 /old-page http://www.example.com/new-page
+
+
+# ||---> Specific Redirect
+redirect 301 /example-category/article-old http://www.example.com/example-category/article-new
+
+
+################
+# ### END ### #
 
 # Compressione
-AddOutputFilterByType DEFLATE text/plain
-AddOutputFilterByType DEFLATE text/html
-AddOutputFilterByType DEFLATE text/xml
-AddOutputFilterByType DEFLATE text/css
-AddOutputFilterByType DEFLATE application/xml
-AddOutputFilterByType DEFLATE application/xhtml+xml
-AddOutputFilterByType DEFLATE application/rss+xml
-AddOutputFilterByType DEFLATE application/x-font-ttf
-AddOutputFilterByType DEFLATE font/opentype
-AddOutputFilterByType DEFLATE image/svg+xml
-AddOutputFilterByType DEFLATE image/x-icon
-AddOutputFilterByType DEFLATE text/x-component
-AddOutputFilterByType DEFLATE application/javascript
-AddOutputFilterByType DEFLATE application/json
+#AddOutputFilterByType DEFLATE text/plain
+#AddOutputFilterByType DEFLATE text/html
+#AddOutputFilterByType DEFLATE text/xml
+#AddOutputFilterByType DEFLATE text/css
+#AddOutputFilterByType DEFLATE application/xml
+#AddOutputFilterByType DEFLATE application/xhtml+xml
+#AddOutputFilterByType DEFLATE application/rss+xml
+#AddOutputFilterByType DEFLATE application/x-font-ttf
+#AddOutputFilterByType DEFLATE font/opentype
+#AddOutputFilterByType DEFLATE image/svg+xml
+#AddOutputFilterByType DEFLATE image/x-icon
+#AddOutputFilterByType DEFLATE text/x-component
+#AddOutputFilterByType DEFLATE application/javascript
+#AddOutputFilterByType DEFLATE application/json
 
 ## Security
 RewriteCond %{QUERY_STRING} proc/self/environ [OR]
@@ -44,64 +64,67 @@ RewriteRule .* - [F]
 
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-<Files "robots.txt">
-Order allow,deny
-Allow from all
-</Files>
+#<Files "robots.txt">
+#Order allow,deny
+#Allow from all
+#</Files>
 
-<Files ~ "(README.txt|LICENSE.txt|configuration.php|htaccess.txt|htaccess|htpasswd|dist)">
-Order allow,deny
-Deny from all
-</Files>
+#<Files ~ "(README.txt|LICENSE.txt|configuration.php|htaccess.txt|htaccess|htpasswd|dist)">
+#Order allow,deny
+#Deny from all
+#</Files>
 
 # File caching
-FileETag MTime Size
-ExpiresActive On
+#FileETag MTime Size
+#ExpiresActive On
 
 ## Expiration time for css, javascript,images,text,audio and video
 
 # Css and Javascript
-ExpiresByType application/javascript A604800
-ExpiresByType application/x-javascript A604800
-ExpiresByType text/css A604800
+#ExpiresByType application/javascript A604800
+#ExpiresByType application/x-javascript A604800
+#ExpiresByType text/css A604800
 
 # Images and text
-ExpiresByType image/x-icon A2419200
-ExpiresByType image/ico A2419200
-ExpiresByType image/icon A2419200
-ExpiresByType text/ico A2419200
-ExpiresByType text/html A300
-ExpiresByType application/ico A2419200
-ExpiresByType image/jpeg A2419200
-ExpiresByType image/jpg A2419200
-ExpiresByType image/png A2419200
-ExpiresByType image/bmp A2419200
-ExpiresByType image/gif A2419200
-ExpiresByType image/tiff A2419200
-ExpiresByType image/jp2 A2419200
-ExpiresByType image/pipeg A2419200
-ExpiresByType image/svg+xml A2419200
+#ExpiresByType image/x-icon A2419200
+#ExpiresByType image/ico A2419200
+#ExpiresByType image/icon A2419200
+#ExpiresByType text/ico A2419200
+#ExpiresByType text/html A300
+#ExpiresByType application/ico A2419200
+#ExpiresByType image/jpeg A2419200
+#ExpiresByType image/jpg A2419200
+#ExpiresByType image/png A2419200
+#ExpiresByType image/bmp A2419200
+#ExpiresByType image/gif A2419200
+#ExpiresByType image/tiff A2419200
+#ExpiresByType image/jp2 A2419200
+#ExpiresByType image/pipeg A2419200
+#ExpiresByType image/svg+xml A2419200
 
 # Audio
-ExpiresByType audio/mpeg A2419200
-ExpiresByType audio/x-mpegurl A2419200
-ExpiresByType audio/x-pn-realaudio A2419200
-ExpiresByType audio/x-wav A2419200
-ExpiresByType audio/x-aiff A2419200
-ExpiresByType audio/basic A2419200
+#ExpiresByType audio/mpeg A2419200
+#ExpiresByType audio/x-mpegurl A2419200
+#ExpiresByType audio/x-pn-realaudio A2419200
+#ExpiresByType audio/x-aiff A2419200
+#ExpiresByType audio/x-wav A2419200
+#ExpiresByType audio/basic A2419200
 
 # Video
-ExpiresByType application/x-shockwave-flash A2419200
-ExpiresByType video/mpeg A2419200
-ExpiresByType video/mp4 A2419200
-ExpiresByType video/quicktime A2419200
-ExpiresByType video/x-ms-asf A2419200
-ExpiresByType video/x-la-asf A2419200
-ExpiresByType video/x-msvideo A2419200
+#ExpiresByType application/x-shockwave-flash A2419200
+#ExpiresByType video/mpeg A2419200
+#ExpiresByType video/mp4 A2419200
+#ExpiresByType video/quicktime A2419200
+#ExpiresByType video/x-ms-asf A2419200
+#ExpiresByType video/x-la-asf A2419200
+#ExpiresByType video/x-msvideo A2419200
 
-RewriteCond %{REQUEST_URI} !^/index\.php
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule .* index.php [L]
+RewriteRule ^(.*)$ index.php?$1 [L,QSA]
+
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s(.*)/index\.php [NC]
+RewriteRule ^ %1 [R=301,L]
 
 ## End - Joomla! core SEF Section.
